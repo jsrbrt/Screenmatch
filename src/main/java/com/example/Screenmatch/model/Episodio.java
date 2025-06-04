@@ -2,13 +2,39 @@ package com.example.Screenmatch.model;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Objects;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+
+@Entity
+@Table(name = "episodios", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"serie_id", "temporada", "numeroEpisodio"})
+})
 public class Episodio {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private Integer temporada;
+    @Column(unique = true)
     private String titulo;
     private Integer numeroEpisodio;
     private Double avaliacao;
     private LocalDate dataLancamento;
+
+    @ManyToOne
+    @JoinColumn(name = "serie_id")    
+    private Serie serie;
+
+    public Episodio(){}
 
     public Episodio(Integer numeroTemporada, DadosEpisodio dadosEpisodio) {
         this.temporada = numeroTemporada;
@@ -26,6 +52,29 @@ public class Episodio {
         } catch (DateTimeParseException ex) {
             this.dataLancamento = null;
         }
+    }
+
+    public void atualizarDados(DadosEpisodio dadosEpisodio) {
+        this.titulo = dadosEpisodio.titulo();
+        this.numeroEpisodio = dadosEpisodio.numero();
+        this.avaliacao = Double.parseDouble(dadosEpisodio.avaliacao());
+        this.dataLancamento = LocalDate.parse(dadosEpisodio.dataLancamento());
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Serie getSerie() {
+        return serie;
+    }
+
+    public void setSerie(Serie serie) {
+        this.serie = serie;
     }
 
     public Integer getTemporada() {
@@ -70,10 +119,26 @@ public class Episodio {
 
     @Override
     public String toString() {
-        return "temporada: " + temporada +
-                ", titulo: '" + titulo + '\'' +
-                ", numeroEpisodio: " + numeroEpisodio +
-                ", avaliacao: " + avaliacao +
-                ", dataLancamento: " + dataLancamento +"\n" ;
+        return "temporada=" + temporada +
+                ", titulo='" + titulo + '\'' +
+                ", numeroEpisodio=" + numeroEpisodio +
+                ", avaliacao=" + avaliacao +
+                ", dataLancamento=" + dataLancamento ;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Episodio episodio = (Episodio) o;
+        return Objects.equals(temporada, episodio.temporada) &&
+               Objects.equals(numeroEpisodio, episodio.numeroEpisodio) &&
+               Objects.equals(titulo, episodio.titulo) &&
+               Objects.equals(serie, episodio.serie);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(temporada, numeroEpisodio, titulo, serie);
     }
 }
