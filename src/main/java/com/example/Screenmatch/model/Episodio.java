@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,7 +23,6 @@ public class Episodio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Integer temporada;
-    @Column(unique = true)
     private String titulo;
     private Integer numeroEpisodio;
     private Double avaliacao;
